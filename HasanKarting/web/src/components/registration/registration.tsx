@@ -56,8 +56,9 @@ const Register = () => {
                     duration: 3,
                 });
             }
-            register();
         }
+        register();
+    };
 
         return (
             <>
@@ -177,6 +178,6 @@ const Register = () => {
             </>
         )
     }
-}
+
 
 export default Register
