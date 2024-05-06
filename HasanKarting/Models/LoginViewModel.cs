@@ -6,7 +6,7 @@ namespace api.Models
     {
         [Required]
         [Display(Name = "Имя пользователя")]
-        public string UserName { get; set; } = null!;
+        public string Username { get; set; } = null!;
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]

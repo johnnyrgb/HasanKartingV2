@@ -6,7 +6,7 @@ namespace api.Models
     {
         [Required]
         [Display(Name = "Имя пользователя")]
-        public string UserName { get; set; } = null!;
+        public string Username { get; set; } = null!;
         [Required]
         [DataType(DataType.EmailAddress)]
         [Display(Name = "Email")]
@@ -19,6 +19,6 @@ namespace api.Models
         [Compare("Password", ErrorMessage = "Пароли не совпадают")]
         [DataType(DataType.Password)]
         [Display(Name = "Подтвердить пароль")]
-        public string PasswordConfirm { get; set; } = null!;
+        public string PasswordConfirmation { get; set; } = null!;
     }
 }

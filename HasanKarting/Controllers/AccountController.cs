@@ -35,7 +35,7 @@ namespace api.Controllers
                 User user = new()
                 {
                     Email = model.Email,
-                    UserName = model.UserName,
+                    UserName = model.Username,
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -78,12 +78,12 @@ namespace api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByNameAsync(model.UserName);
+                    var user = await _userManager.FindByNameAsync(model.Username);
                     if (user != null)
-                        return Ok(new { message = "Выполнен вход", userName = user.UserName });
+                        return Ok(new { message = "Выполнен вход", username = user.UserName });
                     else
                         return BadRequest();
                 }
@@ -117,7 +117,7 @@ namespace api.Controllers
             if (user == null)
                 return Unauthorized(new { message = "Вы гость" });
             await _signInManager.SignOutAsync();
-            return Ok(new { message = "Выполнен выход", userName = user.UserName });
+            return Ok(new { message = "Выполнен выход", username = user.UserName });
         }
 
         [HttpGet]
@@ -127,7 +127,7 @@ namespace api.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
             if (user == null)
                 return Unauthorized(new { message = "Пожалуйста, выполните войдите или зарегистрируйтесь" });
-            return Ok(new { message = "Сессия активна", userName = user.UserName });
+            return Ok(new { message = "Сессия активна", username = user.UserName });
         }
     }
 }
