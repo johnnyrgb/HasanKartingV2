@@ -1,9 +1,9 @@
 interface registrationObject
 {
+    username: string,
     email: string,
     password: string,
     passwordConfirmation: string,
-    role: string
 }
 
 export default registrationObject;
