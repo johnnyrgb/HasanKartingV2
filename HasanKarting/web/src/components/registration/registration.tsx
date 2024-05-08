@@ -23,11 +23,14 @@ const Register = () => {
     const register = async () => {
       const requestOptions = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": "true"
+         },
         body: JSON.stringify(model),
       };
 
-      const response = await fetch(`api/Account/register`, requestOptions);
+      const response = await fetch(`https://localhost:7198/api/Account/register`, requestOptions);
 
       if (response.ok) {
         const data = await response.json();
@@ -155,6 +158,7 @@ const Register = () => {
         <Form.Item
           name="passwordConfirmationItem"
           label="Подтвердите пароль"
+          dependencies={["passwordItem"]}
           hasFeedback={true}
           rules={[
             {
@@ -163,7 +167,7 @@ const Register = () => {
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
-                if (getFieldValue("passwordInput") === value)
+                if (!value || getFieldValue("passwordItem") === value)
                   return Promise.resolve();
                 else {
                   return Promise.reject(); //TODO: вернуть ошибку

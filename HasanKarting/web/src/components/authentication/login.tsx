@@ -25,11 +25,14 @@ const Login = ({ setUser }: PropsType) => {
     const login = async () => {
       const requestOptions = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": "true"
+         },
         body: JSON.stringify(model),
       };
 
-      const response = await fetch(`api/Account/login`, requestOptions);
+      const response = await fetch(`https://localhost:7198/api/Account/login`, requestOptions);
 
       if (response.ok) {
         const data = await response.json();

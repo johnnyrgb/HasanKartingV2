@@ -15,9 +15,12 @@ const Logout = ({ setUser }: PropsType) => {
         const Logout = async() => {
             const requestOptions = {
                 method: 'POST',
+                headers: {
+                    "Access-Control-Allow-Credentials": "true"
+                  },
             };
 
-            const response = await fetch("api/Account/logout", requestOptions)
+            const response = await fetch("https://localhost:7198/api/Account/logout", requestOptions)
 
             if (response.status === 200) {
                 setUser(null);

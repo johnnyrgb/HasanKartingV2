@@ -1,5 +1,6 @@
 ﻿using api.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,7 +27,7 @@ namespace api.Controllers
 
         // POST api/<AccountController>
         [HttpPost]
-        [Route("api/Account/register")]
+        [Route("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
@@ -73,7 +74,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        [Route("api/Account/login")]
+        [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -110,7 +111,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        [Route("api/Account/logout")]
+        [Route("logout")]
         public async Task<IActionResult> Logout()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -121,7 +122,7 @@ namespace api.Controllers
         }
 
         [HttpGet]
-        [Route("api/Account/isauthenticated")]
+        [Route("isauthenticated")]
         public async Task<IActionResult> isAuthenticated()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
