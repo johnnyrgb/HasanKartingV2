@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Input, Button, Form, Checkbox, notification, Typography } from "antd";
 import loginObject from "../entities/loginObject";
 import userObject from "../entities/userObject";
+import axios from 'axios';
 
 const { Text } = Typography;
 interface PropsType {
@@ -32,16 +33,16 @@ const Login = ({ setUser }: PropsType) => {
         body: JSON.stringify(model),
       };
 
-      const response = await fetch(`https://localhost:7198/api/Account/login`, requestOptions);
-
-      if (response.ok) {
-        const data = await response.json();
-
-        if (data.error !== undefined) {
-          console.log(data.error);
-
+      try {
+        const response = await axios.post('https://localhost:7198/api/Account/login', model, {
+          withCredentials: true, // включить куки в запросы
+        });
+    
+        if (response.data.error) {
+          console.log(response.data.error);
+    
           notification.error({
-            message: `Ошибка входа: ${data.error}`,
+            message: `Ошибка входа: ${response.data.error}`,
             placement: "bottom",
             duration: 3,
           });
@@ -53,7 +54,7 @@ const Login = ({ setUser }: PropsType) => {
           });
           navigate("/");
         }
-      } else {
+      } catch (error) {
         notification.error({
           message: "Критическая ошибка!",
           placement: "bottom",
