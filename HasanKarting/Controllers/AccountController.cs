@@ -33,6 +33,14 @@ namespace api.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingUserByUsername = await _userManager.FindByNameAsync(model.Username);
+                var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
+
+                if (existingUserByUsername != null || existingUserByEmail != null)
+                {
+                    return StatusCode(201, new { message = "Пользователь с таким username или email уже существует" });
+                }
+
                 User user = new()
                 {
                     Email = model.Email,
@@ -41,27 +49,20 @@ namespace api.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, false);
                     var temp = await _userManager.FindByNameAsync(user.UserName);
                     if (temp != null)
+                    {
                         await _userManager.AddToRoleAsync(temp, "Racer");
-                    return Ok(new { message = $"Гонщик {user.UserName} создан!" });
+                        return Ok(new { message = $"Гонщик {user.UserName} создан!" });
+                    }
+                    else
+                        return BadRequest();
                 }
                 else
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                    var errorMessage = new
-                    {
-                        message = "Гонщик не создан!",
-                        error = ModelState.Values.SelectMany(e => e.Errors.Select(e => e.ErrorMessage)),
-                    };
-                    return Created("", errorMessage.ToString());
+                    return BadRequest();
                 }
             }
-
             else
             {
                 var errorMessage = new
@@ -69,7 +70,7 @@ namespace api.Controllers
                     message = "Введены неверные данные",
                     error = ModelState.Values.SelectMany(e => e.Errors.Select(e => e.ErrorMessage)),
                 };
-                return Created("", errorMessage.ToString());
+                return StatusCode(202, errorMessage.ToString());
             }
         }
 
@@ -136,7 +137,13 @@ namespace api.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
             if (user == null)
                 return Unauthorized(new { message = "Пожалуйста, выполните войдите или зарегистрируйтесь" });
-            return Ok(new { message = "Сессия активна", username = user.UserName });
+            var responseUser = new
+            {
+                username = user.UserName,
+                email = user.Email,
+                roles = await _userManager.GetRolesAsync(user),
+            };
+            return Ok(responseUser);
         }
     }
 }

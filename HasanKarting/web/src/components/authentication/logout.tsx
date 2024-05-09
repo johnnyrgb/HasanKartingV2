@@ -10,7 +10,6 @@ interface PropsType {
 
 const Logout = ({ setUser }: PropsType) => {
   const navigate = useNavigate();
-
   useEffect(() => {
     const logout = async () => {
       await axios
@@ -20,16 +19,16 @@ const Logout = ({ setUser }: PropsType) => {
         .then(function (response) {
           if (response.status === 200) {
             setUser(null);
-            navigate("/");
+
             notification.success({
               message: "Вы вышли из аккаунта",
               placement: "top",
               duration: 3,
             });
+            navigate("/");
           }
         })
         .catch(function (error) {
-          navigate("/")
           if (error.response) {
             notification.error({
               message: "Вы не вошли в аккаунт",
@@ -49,6 +48,7 @@ const Logout = ({ setUser }: PropsType) => {
               duration: 3,
             });
           }
+          navigate("/");
         });
     };
     logout();

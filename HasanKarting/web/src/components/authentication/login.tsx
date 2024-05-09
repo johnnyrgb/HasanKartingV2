@@ -41,7 +41,7 @@ const Login = ({ setUser }: PropsType) => {
             });
           }
           else if (response.status === 201) {
-            notification.error({
+            notification.warning({
               message: "Неверные данные",
               placement: "top",
               duration: 3,
@@ -74,7 +74,7 @@ const Login = ({ setUser }: PropsType) => {
         <Form.Item
           name="usernameItem"
           label="Имя пользователя"
-          hasFeedback={true}
+          hasFeedback={false}
           rules={[
             {
               required: true,
@@ -90,7 +90,7 @@ const Login = ({ setUser }: PropsType) => {
             }),
           ]}
         >
-          <Input.TextArea
+          <Input
             name="usernameInput"
             onChange={(el) => setUsername(el.target.value)}
             placeholder="Имя пользователя"
@@ -100,7 +100,7 @@ const Login = ({ setUser }: PropsType) => {
         <Form.Item
           name="passwordItem"
           label="Пароль"
-          hasFeedback={true}
+          hasFeedback={false}
           rules={[
             {
               required: true,
@@ -142,7 +142,7 @@ const Login = ({ setUser }: PropsType) => {
           </Button>
           <Text>
             {" "}
-            Еще нет аккаунта? <Link to="/login">Зарегистрироваться.</Link>
+            Еще нет аккаунта? <Link to="/register">Зарегистрироваться.</Link>
           </Text>
         </Form.Item>
       </Form>

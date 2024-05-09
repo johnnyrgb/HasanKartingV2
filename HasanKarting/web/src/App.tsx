@@ -4,15 +4,11 @@ import userObject from './components/entities/userObject';
 import Login from './components/authentication/login';
 import Logout from './components/authentication/logout';
 import Register from './components/registration/registration';
-import logo from './logo.svg';
+import Layout from './components/entities/layout/layout';
 import './App.css';
 import axios from 'axios';
 
 
-interface ResponseModel {
-  message: string;
-  responseUser: userObject;
-}
 function App() {
   const [user, setUser] = useState<userObject | null>(null);
 
@@ -23,9 +19,8 @@ function App() {
         withCredentials: true,
       })
       .then(function (response) {
-        console.log(response.status);
         if (response.status === 200) {
-          setUser(response.data.responseUser)
+          setUser(response.data)
         }
       })
       .catch(function (error) {
@@ -34,13 +29,14 @@ function App() {
     };
     getUser();
   }, []);
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/login' element={<Login setUser={setUser}/>}/>
-        <Route path='/logout' element={<Logout setUser={setUser}/>}/>
-        <Route path='/register' element={<Register/>}/>
+        <Route path='/' element={<Layout user={user}/>}>
+          <Route path='/login' element={<Login setUser={setUser}/>}/>
+          <Route path='/logout' element={<Logout setUser={setUser}/>}/>
+          <Route path='/register' element={<Register/>}/>
+        </Route>
       </Routes>
     </BrowserRouter>
   )

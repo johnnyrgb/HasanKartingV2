@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Input, Button, Form, notification, Typography } from "antd";
 import registrationObject from "../entities/registrationObject";
+import axios from "axios";
 
 const { Text } = Typography;
 
@@ -21,43 +22,58 @@ const Register = () => {
     };
 
     const register = async () => {
-      const requestOptions = {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": "true"
-         },
-        body: JSON.stringify(model),
-      };
-      
-      const response = await fetch(`https://localhost:7198/api/Account/register`, requestOptions);
-
-      if (response.ok) {
-        const data = await response.json();
-
-        if (data.error !== undefined) {
-          console.log(data.error);
-
-          notification.error({
-            message: `Ошибка регистрации: ${data.error}`,
-            placement: "bottom",
-            duration: 3,
-          });
-        } else {
-          notification.success({
-            message: "Вы успешно зарегистрированы!",
-            placement: "bottom",
-            duration: 3,
-          });
-          navigate("/login");
-        }
-      } else {
-        notification.error({
-          message: "Критическая ошибка!",
-          placement: "bottom",
-          duration: 3,
-        });
-      }
+      await axios
+        .post("https://localhost:7198/api/Account/register", model, {
+          withCredentials: true,
+        })
+        .then(function (response) {
+          console.log(response);
+          if (response.status === 200) {
+            navigate("/login");
+            notification.success({
+              message: `Аккаунт ${model.username} создан!`,
+              placement: "top",
+              duration: 3,
+            });
+          }
+          else if (response.status === 201) {
+            notification.warning({
+              message: `Пользователь с такими данными уже существует`,
+              placement: "top",
+              duration: 3,
+            });
+          }
+          else if (response.status === 202) {
+            notification.warning({
+              message: `Введены некорректные данные`,
+              placement: "top",
+              duration: 3,
+            });
+          }
+        })
+        .catch(function (error) {
+          console.error(error);
+          console.log(error);
+          if (error.response) {
+            notification.error({
+              message: "Ошибка сервера",
+              placement: "top",
+              duration: 3,
+            });
+          } else if (error.request) {
+            notification.error({
+              message: "Ошибка при отправке данных",
+              placement: "top",
+              duration: 3,
+            });
+          } else {
+            notification.error({
+              message: "Неизвестная ошибка",
+              placement: "top",
+              duration: 3,
+            });
+          }
+        })
     };
     register();
   };
@@ -84,11 +100,12 @@ const Register = () => {
             }),
           ]}
         >
-          <Input.TextArea
+          <Input
             name="usernameInput"
             onChange={(el) => setUsername(el.target.value)}
             placeholder="Имя пользователя"
             allowClear={true}
+            maxLength={25}
             count={{
               show: true,
               max: 25,
@@ -117,7 +134,7 @@ const Register = () => {
             }),
           ]}
         >
-          <Input.TextArea
+          <Input
             name="emailInput"
             onChange={(el) => setEmail(el.target.value)}
             placeholder="hasan@karting.com"
