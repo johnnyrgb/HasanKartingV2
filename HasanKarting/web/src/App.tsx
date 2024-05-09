@@ -6,6 +6,7 @@ import Logout from './components/authentication/logout';
 import Register from './components/registration/registration';
 import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
 
 
 interface ResponseModel {
@@ -17,20 +18,19 @@ function App() {
 
   useEffect(() => {
     const getUser = async() => {
-      const requestOptions = {
-        method: "GET",
-        headers: {
-          "Access-Control-Allow-Credentials": "true"
-        },
-      };
-
-      return await fetch("api/Account/isauthenticated", requestOptions)
-      .then((response) => {
-        return response.json();
+    
+      await axios.get("https://localhost:7198/api/Account/isauthenticated", {
+        withCredentials: true,
       })
-      .then((data: ResponseModel) => {
-        setUser(data.responseUser);
-      }, (error) => console.log(error));
+      .then(function (response) {
+        console.log(response.status);
+        if (response.status === 200) {
+          setUser(response.data.responseUser)
+        }
+      })
+      .catch(function (error) {
+        console.error(error);
+      })
     };
     getUser();
   }, []);

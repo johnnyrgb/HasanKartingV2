@@ -84,7 +84,15 @@ namespace api.Controllers
                 {
                     var user = await _userManager.FindByNameAsync(model.Username);
                     if (user != null)
-                        return Ok(new { message = "Выполнен вход", username = user.UserName });
+                    {
+                        var responseUser = new
+                        {
+                            username = user.UserName,
+                            email = user.Email,
+                            roles = await _userManager.GetRolesAsync(user),
+                        };
+                        return Ok(new { message = "Выполнен вход", responseUser });
+                    }
                     else
                         return BadRequest();
                 }

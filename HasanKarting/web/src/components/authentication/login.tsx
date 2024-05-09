@@ -24,44 +24,47 @@ const Login = ({ setUser }: PropsType) => {
     };
 
     const login = async () => {
-      const requestOptions = {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": "true"
-         },
-        body: JSON.stringify(model),
-      };
 
-      try {
-        const response = await axios.post('https://localhost:7198/api/Account/login', model, {
+      await axios
+        .post("https://localhost:7198/api/Account/login", model, {
           withCredentials: true, // включить куки в запросы
+        })
+        .then(function (response) {
+          if (response.status === 200) {
+            console.log(response);
+            setUser(response.data.responseUser);
+            navigate("/");
+            notification.success({
+              message: `Добро пожаловать, ${response.data.responseUser.username}!`,
+              placement: "top",
+              duration: 3,
+            });
+          }
+          else if (response.status === 201) {
+            notification.error({
+              message: "Неверные данные",
+              placement: "top",
+              duration: 3,
+            });
+          } 
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (error.request) {
+            notification.error({
+              message: "Ошибка при отправке данных",
+              placement: "top",
+              duration: 3,
+            });
+          } else {
+            notification.error({
+              message: "Неизвестная ошибка",
+              placement: "top",
+              duration: 3,
+            });
+          }
         });
-    
-        if (response.data.error) {
-          console.log(response.data.error);
-    
-          notification.error({
-            message: `Ошибка входа: ${response.data.error}`,
-            placement: "bottom",
-            duration: 3,
-          });
-        } else {
-          notification.success({
-            message: "Вы успешно вошли!",
-            placement: "bottom",
-            duration: 3,
-          });
-          navigate("/");
-        }
-      } catch (error) {
-        notification.error({
-          message: "Критическая ошибка!",
-          placement: "bottom",
-          duration: 3,
-        });
-      }
-    };
+      };
     login();
   };
 

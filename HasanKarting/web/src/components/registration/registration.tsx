@@ -29,7 +29,7 @@ const Register = () => {
          },
         body: JSON.stringify(model),
       };
-
+      
       const response = await fetch(`https://localhost:7198/api/Account/register`, requestOptions);
 
       if (response.ok) {
