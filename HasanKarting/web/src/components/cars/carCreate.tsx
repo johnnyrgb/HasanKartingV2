@@ -5,8 +5,8 @@ import axios from "axios";
 
 interface PropsType {
     editedCar: carObject | undefined;
-    addedCar: (company: carObject) => void;
-    updatedCar: (company: carObject) => void;
+    addedCar: (car: carObject) => void;
+    updatedCar: (car: carObject) => void;
     createModalIsShow: boolean;
     showCreateModel: (value: boolean) => void;
 }

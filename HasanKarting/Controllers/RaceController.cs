@@ -41,11 +41,11 @@ namespace api.Controllers
         [HttpPost]
         public async Task<ActionResult<Race>> Post(Race race)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            _databaseContext.Races.Add(race);
-            await _databaseContext.SaveChangesAsync();
-            return CreatedAtAction("Get", new { id = race.Id }, race);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                _databaseContext.Races.Add(race);
+                await _databaseContext.SaveChangesAsync();
+                return CreatedAtAction("Get", new { id = race.Id }, race);
         }
 
         // PUT api/<RaceController>/5

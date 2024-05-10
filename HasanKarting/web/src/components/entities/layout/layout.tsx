@@ -48,11 +48,11 @@ const RacerItems = [
 const AdministratorItems = [
   {
     label: (
-      <NavLink tag={Link} to="/" className="custom-navlink">
+      <NavLink tag={Link} to="/races" className="custom-navlink">
         Заезды
       </NavLink>
     ),
-    key: "2",
+    key: "/races",
   },
   {
     label: (
