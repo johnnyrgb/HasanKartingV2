@@ -5,8 +5,10 @@ import Login from './components/authentication/login';
 import Logout from './components/authentication/logout';
 import Register from './components/registration/registration';
 import Layout from './components/entities/layout/layout';
+import Cars from './components/cars/cars';
 import './App.css';
 import axios from 'axios';
+
 
 
 function App() {
@@ -36,6 +38,7 @@ function App() {
           <Route path='/login' element={<Login setUser={setUser}/>}/>
           <Route path='/logout' element={<Logout setUser={setUser}/>}/>
           <Route path='/register' element={<Register/>}/>
+          <Route path='/cars' element={<Cars/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

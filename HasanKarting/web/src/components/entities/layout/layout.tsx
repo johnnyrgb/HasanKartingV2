@@ -64,11 +64,11 @@ const AdministratorItems = [
   },
   {
     label: (
-      <NavLink tag={Link} to="/" className="custom-navlink"> 
+      <NavLink tag={Link} to="/cars" className="custom-navlink"> 
         Болиды
       </NavLink>
     ),
-    key: "4",
+    key: "/cars",
   },
 ];
 
