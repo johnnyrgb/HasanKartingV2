@@ -56,11 +56,11 @@ const AdministratorItems = [
   },
   {
     label: (
-      <NavLink tag={Link} to="/" className="custom-navlink">
+      <NavLink tag={Link} to="/racers" className="custom-navlink">
         Гонщики
       </NavLink>
     ),
-    key: "3",
+    key: "/racers",
   },
   {
     label: (

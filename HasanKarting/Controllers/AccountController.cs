@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using api.Models.Data;
+using System.Runtime.ConstrainedExecution;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,12 +20,14 @@ namespace api.Controllers
         private readonly UserManager<IdentityUser<int>> _userManager;
         private readonly SignInManager<IdentityUser<int>> _signInManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly DatabaseContext _databaseContext;
 
-        public AccountController(UserManager<IdentityUser<int>> userManager, SignInManager<IdentityUser<int>> signInManager, RoleManager<IdentityRole<int>> roleManager)
+        public AccountController(UserManager<IdentityUser<int>> userManager, SignInManager<IdentityUser<int>> signInManager, RoleManager<IdentityRole<int>> roleManager, DatabaseContext databaseContext)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
+            _databaseContext = databaseContext;
         }
 
 
@@ -145,5 +151,85 @@ namespace api.Controllers
             };
             return Ok(responseUser);
         }
+
+        [HttpGet]
+        [Route("racers")]
+        public async Task<IActionResult> GetAllRacers()
+        {
+            var users = (await _userManager.GetUsersInRoleAsync("Racer")).Select(u => new
+            {
+                id = u.Id,
+                username = u.UserName,
+                email = u.Email,
+                racenumber = _databaseContext.Protocols.Count(p => p.UserId == u.Id && p.CompletionTime != null),
+                winsnumber = _databaseContext.Protocols.Where(p => p.CompletionTime != null).GroupBy(p => p.RaceId).Count(g => g.Min(p => p.CompletionTime) == g.Where(p => p.UserId == u.Id && p.CompletionTime != null).First().CompletionTime),
+            });
+            return Ok(users);
+        }
+
+        [HttpPut("racers/{id}")]
+        public async Task<IActionResult> PutRacer(int id, [FromBody] RacerViewModel racer)
+        {
+            if (id != racer.id)
+                return BadRequest();
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user != null)
+            {
+                await _userManager.SetUserNameAsync(user, racer.username);
+                await _userManager.SetEmailAsync(user, racer.email);
+            }
+            else
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+
+        [HttpPost("racers")]
+        public async Task<ActionResult<RacerViewModel>> Post([FromBody] RacerViewModel racer)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingUserByUsername = await _userManager.FindByNameAsync(racer.username);
+                var existingUserByEmail = await _userManager.FindByEmailAsync(racer.email);
+
+                if (existingUserByUsername != null || existingUserByEmail != null)
+                {
+                    return StatusCode(201, new { message = "Пользователь с таким username или email уже существует" });
+                }
+
+                User user = new()
+                {
+                    Email = racer.email,
+                    UserName = racer.username,
+                };
+                var result = await _userManager.CreateAsync(user, "ChangeMe1!");
+                if (result.Succeeded)
+                {
+                    var temp = await _userManager.FindByNameAsync(user.UserName);
+                    if (temp != null)
+                    {
+                        await _userManager.AddToRoleAsync(temp, "Racer");
+                        return Ok(new { message = $"Гонщик {user.UserName} создан!" });
+                    }
+                    else
+                        return BadRequest();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            else
+            {
+                var errorMessage = new
+                {
+                    message = "Введены неверные данные",
+                    error = ModelState.Values.SelectMany(e => e.Errors.Select(e => e.ErrorMessage)),
+                };
+                return StatusCode(202, errorMessage.ToString());
+            }
+        }
     }
 }
+

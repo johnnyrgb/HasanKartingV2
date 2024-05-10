@@ -8,6 +8,7 @@ import Layout from './components/entities/layout/layout';
 import Cars from './components/cars/cars';
 import './App.css';
 import axios from 'axios';
+import Racers from './components/racers/racers';
 
 
 
@@ -39,6 +40,7 @@ function App() {
           <Route path='/logout' element={<Logout setUser={setUser}/>}/>
           <Route path='/register' element={<Register/>}/>
           <Route path='/cars' element={<Cars/>}/>
+          <Route path='/racers' element={<Racers/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

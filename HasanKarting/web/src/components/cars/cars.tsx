@@ -177,7 +177,7 @@ const Cars : React.FC<PropsType> = () => {
                 key="CompaniesTable"
                 dataSource={cars}
                 columns={columns}
-                pagination={{pageSize: 15}}
+                pagination={{pageSize: 30}}
                 scroll={{y: 1000}}
                 bordered
                 sortDirections={['ascend', 'descend']}

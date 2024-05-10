@@ -112,7 +112,6 @@ const CarCreate : React.FC<PropsType> = ({
                 mileage,
                 weight
             }
-            console.log("dfsdf");
             await axios
             .put(`https://localhost:7198/api/Car/${id}`, car, {
                 withCredentials: true,
