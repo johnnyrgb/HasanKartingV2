@@ -11,7 +11,7 @@ namespace api.Models.Data
             {
                 databaseContext.Database.Migrate();
             }
-
+            #region IdentitySeed
             await roleManager.CreateAsync(new IdentityRole<int>("Administrator"));
             await roleManager.CreateAsync(new IdentityRole<int>("Racer"));
 
@@ -38,7 +38,8 @@ namespace api.Models.Data
             var admin = await userManager.FindByNameAsync("NielsWittich");
             if (admin != null)
                 await userManager.AddToRoleAsync(admin, "Administrator");
-
+            #endregion
+            #region Seed
             try
             {
                 databaseContext.Database.EnsureCreated();
@@ -182,6 +183,7 @@ namespace api.Models.Data
             {
                 throw;
             }
+            #endregion
         }
     }
 }

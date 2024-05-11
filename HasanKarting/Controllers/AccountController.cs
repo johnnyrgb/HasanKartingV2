@@ -1,12 +1,8 @@
 ﻿using api.Models;
+using api.Models.Data;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using api.Models.Data;
-using System.Runtime.ConstrainedExecution;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,6 +10,10 @@ namespace api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    /// <summary>
+    ///  Класс AccountController. Отвечает за регистрацию учетных записей, вход в учетную записи и выход из нее.
+    ///  Также есть метод возвращения списка пользователей с ролью "Racer"
+    /// </summary>
     public class AccountController : ControllerBase
     {
 
@@ -30,7 +30,10 @@ namespace api.Controllers
             _databaseContext = databaseContext;
         }
 
-
+        /// <summary>
+        /// Метод принимает объект RegisterViewModel, откуда берет Username, Email, Password для регистрации нового пользователя.
+        /// Проверяет существование пользователя с этими данными. Если не найден, то создает нового пользователя с ролью "Racer".
+        /// </summary>
         // POST api/<AccountController>
         [HttpPost]
         [Route("register")]
@@ -79,7 +82,10 @@ namespace api.Controllers
                 return StatusCode(202, errorMessage.ToString());
             }
         }
-
+        /// <summary>
+        /// Метод принимает объект класса LoginViewModel, откуда берет Username, Password, RememberMe и с помощью этих данных
+        /// аутентифицирует пользователя. Если RememberMe = true, то устанавливаются долговременные куки, иначе -- на одну сессию.
+        /// </summary>
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginViewModel model)
@@ -124,7 +130,9 @@ namespace api.Controllers
                 return Created("", errorMessage);
             }
         }
-
+        /// <summary>
+        /// Метод выхода пользователя из учетной записи.
+        /// </summary>
         [HttpPost]
         [Route("logout")]
         public async Task<IActionResult> Logout()
@@ -135,7 +143,9 @@ namespace api.Controllers
             await _signInManager.SignOutAsync();
             return Ok(new { message = "Выполнен выход", username = user.UserName });
         }
-
+        /// <summary>
+        /// Метод проверки аутентификации пользователя. Из куки получает текущего пользователя. Если null -- неаутентифицирован.
+        /// </summary>
         [HttpGet]
         [Route("isauthenticated")]
         public async Task<IActionResult> isAuthenticated()
@@ -151,7 +161,9 @@ namespace api.Controllers
             };
             return Ok(responseUser);
         }
-
+        /// <summary>
+        /// Метод возвращает всех пользователей с ролью "Racer".
+        /// </summary>
         [HttpGet]
         [Route("racers")]
         public async Task<IActionResult> GetAllRacers()
@@ -166,7 +178,10 @@ namespace api.Controllers
             });
             return Ok(users);
         }
-
+        /// <summary>
+        /// Метод принимает объект класса RacerViewModel, откуда берет данные Username и Email и обновляет их для 
+        /// соответствующего id пользователя.
+        /// </summary>
         [HttpPut("racers/{id}")]
         public async Task<IActionResult> PutRacer(int id, [FromBody] RacerViewModel racer)
         {
@@ -184,7 +199,9 @@ namespace api.Controllers
             }
             return NoContent();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         [HttpPost("racers")]
         public async Task<ActionResult<RacerViewModel>> Post([FromBody] RacerViewModel racer)
         {

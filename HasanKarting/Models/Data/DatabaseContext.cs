@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace api.Models.Data
 {
     public partial class DatabaseContext : IdentityDbContext<IdentityUser<int>, IdentityRole<int>, int>
     {
         protected readonly IConfiguration _configuration;
+        // Конструктор контекста базы данных, принимает IConfiguration для получения строки подключения
         public DatabaseContext(IConfiguration configuration)
         {
             _configuration = configuration;
         }
-
+        // Метод для настройки подключения к базе данных
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(_configuration.GetConnectionString("HasanKarting"));
@@ -22,6 +22,7 @@ namespace api.Models.Data
         public DbSet<Race> Races { get; set; }
         public DbSet<Protocol> Protocols { get; set; }
 
+        #region FluentAPI
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -83,5 +84,6 @@ namespace api.Models.Data
                 p.Property(p => p.CompletionTime).HasColumnType("time");
             });
         }
+        #endregion FluentAPI
     }
 }

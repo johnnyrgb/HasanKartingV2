@@ -19,14 +19,18 @@ namespace api.Controllers
         {
             _databaseContext = databaseContext;
         }
-
+        /// <summary>
+        /// Получение списка всех болидов
+        /// </summary>
         // GET: api/<CarController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Car>>> Get()
         {
             return await _databaseContext.Cars.ToListAsync();
         }
-
+        /// <summary>
+        /// Получение болида по id
+        /// </summary>
         // GET api/<CarController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Car>> Get(int id)
@@ -36,7 +40,9 @@ namespace api.Controllers
                 return NotFound();
             return car;
         }
-
+        /// <summary>
+        /// Создание нового болида
+        /// </summary>
         // POST api/<CarController>
         [HttpPost]
         public async Task<ActionResult<Car>> Post(Car car)
@@ -47,7 +53,9 @@ namespace api.Controllers
             await _databaseContext.SaveChangesAsync();
             return CreatedAtAction("Get", new { id = car.Id }, car);
         }
-
+        /// <summary>
+        /// Обновление существующего болида
+        /// </summary>
         // PUT api/<CarController>/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, Car car)
@@ -70,7 +78,9 @@ namespace api.Controllers
 
             return NoContent();
         }
-
+        /// <summary>
+        /// Удаление существующего болида
+        /// </summary>
         // DELETE api/<CarController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
