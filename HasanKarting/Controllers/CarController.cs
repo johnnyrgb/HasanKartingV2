@@ -1,5 +1,6 @@
 ﻿using api.Models;
 using api.Models.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ namespace api.Controllers
         /// </summary>
         // GET: api/<CarController>
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<IEnumerable<Car>>> Get()
         {
             return await _databaseContext.Cars.ToListAsync();
@@ -33,6 +35,7 @@ namespace api.Controllers
         /// </summary>
         // GET api/<CarController>/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Car>> Get(int id)
         {
             var car = await _databaseContext.Cars.FindAsync(id);
@@ -45,6 +48,7 @@ namespace api.Controllers
         /// </summary>
         // POST api/<CarController>
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Car>> Post(Car car)
         {
             if (!ModelState.IsValid)
@@ -58,6 +62,7 @@ namespace api.Controllers
         /// </summary>
         // PUT api/<CarController>/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Put(int id, Car car)
         {
             if (id != car.Id)

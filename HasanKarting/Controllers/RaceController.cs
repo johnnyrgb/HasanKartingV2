@@ -1,5 +1,6 @@
 ﻿using api.Models;
 using api.Models.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ namespace api.Controllers
         /// </summary>
         // GET: api/<RaceController>
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<IEnumerable<Race>>> Get()
         {
             return await _databaseContext.Races.ToListAsync();
@@ -37,6 +39,7 @@ namespace api.Controllers
         /// </summary>
         [HttpGet]
         [Route("all")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> GetAllRaces()
         {
             var races = (await _databaseContext.Races.ToListAsync()).Select(r => new
@@ -68,6 +71,7 @@ namespace api.Controllers
         /// </summary>
         // GET api/<RaceController>/5
         [HttpGet("generate/{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Race>> GenerateResultById(int id)
             {
             var protocols = await _databaseContext.Protocols
@@ -96,6 +100,7 @@ namespace api.Controllers
 
         // POST api/<RaceController>
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Race>> Post(Race race)
             {
             if (!ModelState.IsValid)
@@ -109,6 +114,7 @@ namespace api.Controllers
         /// </summary>
         // PUT api/<RaceController>/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Put(int id, Race race)
         {
             if (id != race.Id)
@@ -134,6 +140,7 @@ namespace api.Controllers
         /// </summary>
         // DELETE api/<RaceController>/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int id)
         {
             var race = await _databaseContext.Races.FindAsync(id);
@@ -152,6 +159,7 @@ namespace api.Controllers
         /// Метод принимает id гонки, получает пользователя из куки и удаляет соответсвующий протокол.
         /// </summary>
         [HttpDelete("quitrace/{id}")]
+        [Authorize(Roles = "Administrator, Racer")]
         public async Task<IActionResult> QuitRace(int id)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -175,6 +183,7 @@ namespace api.Controllers
         /// дистанции равным null, если свободный болид есть, и возвращает занятый болид. Если нет, то возвращает код 201.
         /// </summary>
         [HttpGet("registerrace/{id}")]
+        [Authorize(Roles = "Administrator, Racer")]
         public async Task<IActionResult> RegisterRace(int id)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -212,6 +221,7 @@ namespace api.Controllers
         /// список id гонок, в которых участвовал пользователь. Затем возвращает список гонок с соответствующим id.
         /// </summary>
         [HttpGet("myraces")]
+        [Authorize(Roles = "Administrator, Racer")]
         public async Task<IActionResult> GetMyRaces()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -240,6 +250,7 @@ namespace api.Controllers
         /// проведения которых >= сегодняшней дате.
         /// </summary>
         [HttpGet("registerraces")]
+        [Authorize(Roles = "Administrator, Racer")]
         public async Task<IActionResult> GetRegisterRaces()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);

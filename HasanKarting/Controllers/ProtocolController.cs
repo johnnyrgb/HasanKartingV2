@@ -1,5 +1,6 @@
 ﻿using api.Models;
 using api.Models.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,7 @@ namespace api.Controllers
         /// </summary>
         // GET api/<ProtocolController>/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Protocol>> Get(int id)
         {
             var protocol = await _databaseContext.Protocols.FindAsync(id);
@@ -50,6 +52,7 @@ namespace api.Controllers
         /// (таблица результатов вида: гонщик, болид, время прохождения дистанции).
         /// </summary>
         [HttpGet("race/{id}")]
+        [Authorize(Roles = "Administrator, Racer")]
         public async Task<ActionResult> GetByRaceId(int id)
         {
             var protocols = (await _databaseContext.Protocols.ToListAsync()).Where(p => p.RaceId == id).Select(async p => new
@@ -67,6 +70,7 @@ namespace api.Controllers
         /// </summary>
         // POST api/<ProtocolController>
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Protocol>> Post(Protocol protocol)
         {
             if (!ModelState.IsValid)
@@ -80,6 +84,7 @@ namespace api.Controllers
         /// </summary>
         // PUT api/<ProtocolController>/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Put(int id, Protocol protocol)
         {
             if (id != protocol.Id)
@@ -105,6 +110,7 @@ namespace api.Controllers
         /// </summary>
         // DELETE api/<ProtocolController>/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int id)
         {
             var protocol = await _databaseContext.Protocols.FindAsync(id);
