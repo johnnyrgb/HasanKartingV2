@@ -5,18 +5,18 @@ import userObject from "../userObject";
 import "../../../styles/fonts.css";
 import "../../../styles/navlink.css";
 
-const { Header, Content, Footer } = LayoutAntd;
+const { Header, Content, Footer } = LayoutAntd; // Определяем разделы LayoutAntd
 
-interface PropsType {
+interface PropsType { // Определяем интерфейс PropsType для пропсов компонента Layout
   user: userObject | null;
 }
 
-const DefaultItems = [
+const DefaultItems = [ // Элемент меню по умолчанию
   {
     label: (
       <NavLink
         tag={Link}
-        to="/"
+        to="/main"
         className="custom-navlink"
         style={{
           fontFamily: "Lozung, sans-serif",
@@ -29,7 +29,7 @@ const DefaultItems = [
     key: "2",
   },
 ];
-const RacerItems = [
+const RacerItems = [ // Элементы меню для гонщика
   {
     label: (
       <NavLink tag={Link} to="/myraces" className="custom-navlink">
@@ -40,8 +40,8 @@ const RacerItems = [
   },
 ];
 
-const AdministratorItems = [
-  {
+const AdministratorItems = [ // Элементы меню для администратора
+  { 
     label: (
       <NavLink tag={Link} to="/races" className="custom-navlink">
         Заезды
@@ -67,8 +67,8 @@ const AdministratorItems = [
   },
 ];
 
-const LogoutItem = {
-  label: (
+const LogoutItem = { // Элемент меню для выхода
+  label: ( 
     <NavLink
       tag={Link}
       to="/logout"
@@ -81,7 +81,8 @@ const LogoutItem = {
   key: "/logout",
 };
 
-const GuestItems = [
+const GuestItems = [ // Элементы меню для гостя
+
   {
     label: (
       <NavLink tag={Link} to="/register" className="custom-navlink">
@@ -100,8 +101,8 @@ const GuestItems = [
   },
 ];
 
-const Layout = ({ user }: PropsType) => {
-  const location = useLocation();
+const Layout = ({ user }: PropsType) => { // Определяем компонент Layout
+  const location = useLocation();  // Получаем текущий путь из useLocation
   return (
     <LayoutAntd>
       <Header
@@ -117,7 +118,7 @@ const Layout = ({ user }: PropsType) => {
             theme="dark"
             mode="horizontal"
             selectedKeys={[location.pathname]}
-            items={[
+            items={[ // Добавляем элементы меню в зависимости от роли пользователя
               ...DefaultItems,
               ...(user?.roles.includes("Racer")
                 ? RacerItems.filter((item) => item.key !== "/logout")
@@ -128,7 +129,7 @@ const Layout = ({ user }: PropsType) => {
           ></Menu>
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          {user?.roles.includes("Racer") && (
+          {user?.roles.includes("Racer") && ( // Отображаем меню выхода для гонщика
             <Menu
               style={{ backgroundColor: "transparent", color: "#ffcc00" }}
               theme="dark"
@@ -137,7 +138,7 @@ const Layout = ({ user }: PropsType) => {
               items={[LogoutItem]}
             ></Menu>
           )}
-          {user?.roles.includes("Administrator") && (
+          {user?.roles.includes("Administrator") && ( // Отображаем меню выхода для администратора
             <Menu
               style={{ backgroundColor: "transparent", color: "#ffcc00" }}
               theme="dark"

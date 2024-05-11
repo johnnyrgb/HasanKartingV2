@@ -6,11 +6,13 @@ import Logout from './components/authentication/logout';
 import Register from './components/registration/registration';
 import Layout from './components/entities/layout/layout';
 import Cars from './components/cars/cars';
-import './App.css';
-import axios from 'axios';
 import Racers from './components/racers/racers';
 import Races from './components/races/races';
 import MyRaces from './components/races/userRaces';
+import MainPage from './components/entities/mainpage/mainpage';
+import './App.css';
+import axios from 'axios';
+
 
 
 
@@ -45,6 +47,7 @@ function App() {
           <Route path='/racers' element={<Racers/>}/>
           <Route path='/races' element={<Races/>}/>
           <Route path='/myraces' element={<MyRaces/>}/>
+          <Route path='/main' element={<MainPage/>}/>
         </Route>
       </Routes>
     </BrowserRouter>
