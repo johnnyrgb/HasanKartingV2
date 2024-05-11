@@ -5,8 +5,6 @@ import carObject from "../entities/carObject";
 import CarCreate from "./carCreate";
 import axios from "axios";
 
-interface PropsType { }
-
 const Cars = () => {
     const [cars, setCars] = useState<Array<carObject>>([]);  // Состояние для хранения списка автомобилей
     const [createModalIsShow, showCreateModal] = useState<boolean>(false); // Состояние для отображения модального окна создания автомобиля

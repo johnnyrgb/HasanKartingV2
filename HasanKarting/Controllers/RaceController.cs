@@ -172,7 +172,7 @@ namespace api.Controllers
         /// <summary>
         /// Метод регистрации гонщика на гонку.
         /// Метод принимает id гонки, получает пользователя из куки создает новый протокол с временем прохождения
-        /// дистанции равным null.
+        /// дистанции равным null, если свободный болид есть, и возвращает занятый болид. Если нет, то возвращает код 201.
         /// </summary>
         [HttpGet("registerrace/{id}")]
         public async Task<IActionResult> RegisterRace(int id)
@@ -192,7 +192,7 @@ namespace api.Controllers
                 .FirstOrDefaultAsync();
 
             if (availableCar == null)
-                return Conflict("Нет доступных болидов.");
+                return StatusCode(201);
 
             var protocol = new Protocol
             {
@@ -204,7 +204,7 @@ namespace api.Controllers
             _databaseContext.Protocols.Add(protocol);
             await _databaseContext.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(RegisterRace), new { id = protocol.Id }, protocol);
+            return Ok(availableCar);
         }
         /// <summary>
         /// Метод возврата гонок, в которых участвовал (будет участвовать) пользователь (гонщик).
