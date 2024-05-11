@@ -7,13 +7,12 @@ import axios from "axios";
 
 interface PropsType { }
 
-const Cars : React.FC<PropsType> = () => {
+const Cars = () => {
+    const [cars, setCars] = useState<Array<carObject>>([]);  // Состояние для хранения списка автомобилей
+    const [createModalIsShow, showCreateModal] = useState<boolean>(false); // Состояние для отображения модального окна создания автомобиля
+    const [editedCar, setEditedCar] = useState<carObject>(); // Состояние для хранения редактируемого автомобиля
 
-    const [cars, setCars] = useState<Array<carObject>>([]); //Хранение состояния компаний
-    const [createModalIsShow, showCreateModel] = useState<boolean>(false); //Храниение состояния модального окна для создания компании
-    const [editedCar, setEditedCar] = useState<carObject>(); //Хранение компании, которую редактируют
-
-    const updateCar = (car : carObject) => {
+    const updateCar = (car : carObject) => { // Обновление списка автомобилей после изменения
         setCars(
             cars.map((e) => {
                 if (e.id === car.id)
@@ -23,15 +22,15 @@ const Cars : React.FC<PropsType> = () => {
         )
     };
 
-    const removeCar = (removeId: number | undefined) => setCars(cars.filter(({ id }) => id !== removeId));
+    const removeCar = (removeId: number | undefined) => setCars(cars.filter(({ id }) => id !== removeId)); // Удаление автомобиля из списка
 
-    const addCar = () => {
+    const addCar = () => { // Открытие модального окна для создания нового автомобиля
         setEditedCar(undefined);
         setCars([...cars]);
-        showCreateModel(true);
+        showCreateModal(true);
     }
 
-    useEffect(() => {
+    useEffect(() => { // Загрузка списка автомобилей с сервера при монтировании компонента
         const getCars = async () => {
 
             await axios
@@ -68,7 +67,7 @@ const Cars : React.FC<PropsType> = () => {
         getCars();
     }, [createModalIsShow]);
 
-    const deleteCar = async (id: number | undefined) => {
+    const deleteCar = async (id: number | undefined) => { // Удаление автомобиля с сервера и из списка
 
         await axios
             .delete(`https://localhost:7198/api/Car/${id}`, {
@@ -102,13 +101,13 @@ const Cars : React.FC<PropsType> = () => {
             })
     };
 
-    const editCar = (car : carObject) => {
+    const editCar = (car : carObject) => { // Открытие модального окна для редактирования автомобиля
         setEditedCar(car);
         console.log(car);
-        showCreateModel(true);
+        showCreateModal(true);
     };
 
-    const columns : TableProps<carObject>["columns"] = [
+    const columns : TableProps<carObject>["columns"] = [ // Определение колонок таблицы
         {
             title: "Произоводитель",
             dataIndex: "manufacturer",
@@ -165,16 +164,17 @@ const Cars : React.FC<PropsType> = () => {
 
     return (
         <React.Fragment>
+            {/* Модальное окно для создания и редактирования автомобиля */}
             <CarCreate
                 editedCar={editedCar}
                 addedCar={addCar}
                 updatedCar={updateCar}
                 createModalIsShow={createModalIsShow}
-                showCreateModel={showCreateModel}
+                showCreateModal={showCreateModal}
             />
-            
+            {/* Таблица с автомобилями */}
             <Table
-                key="CompaniesTable"
+                key="carsTable"
                 dataSource={cars}
                 columns={columns}
                 pagination={{pageSize: 30}}
@@ -182,6 +182,7 @@ const Cars : React.FC<PropsType> = () => {
                 bordered
                 sortDirections={['ascend', 'descend']}
             />
+            {/* Кнопка для создания нового автомобиля */}
             <Button onClick={(e) => {
                 addCar()
                 }}>Создать болид</Button>

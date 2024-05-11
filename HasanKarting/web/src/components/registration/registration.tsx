@@ -7,13 +7,13 @@ import axios from "axios";
 const { Text } = Typography;
 
 const Register = () => {
-  const [username, setUsername] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
-  const navigate = useNavigate();
+  const [username, setUsername] = useState<string>(""); // Состояние для имени пользователя
+  const [email, setEmail] = useState<string>(""); // Состояние для электронной почты
+  const [password, setPassword] = useState<string>(""); // Состояние для пароля
+  const [passwordConfirmation, setPasswordConfirmation] = useState<string>(""); // Состояние для подтверждения пароля
+  const navigate = useNavigate(); // Перенаправление пользователя
 
-  const handleSubmit = () => {
+  const handleSubmit = () => { // Обработчик отправки формы
     const model: registrationObject = {
       username,
       email,
@@ -21,12 +21,12 @@ const Register = () => {
       passwordConfirmation,
     };
 
-    const register = async () => {
+    const register = async () => { // Функция для выполнения запроса на сервер
       await axios
-        .post("https://localhost:7198/api/Account/register", model, {
+        .post("https://localhost:7198/api/Account/register", model, { // Отправка POST-запроса на сервер с использованием axios
           withCredentials: true,
         })
-        .then(function (response) {
+        .then(function (response) { // Обработка различных статусов ответа сервера
           console.log(response);
           if (response.status === 200) {
             navigate("/login");
@@ -51,7 +51,7 @@ const Register = () => {
             });
           }
         })
-        .catch(function (error) {
+        .catch(function (error) { // Обработка ошибок запроса
           console.error(error);
           console.log(error);
           if (error.response) {
@@ -75,12 +75,13 @@ const Register = () => {
           }
         })
     };
-    register();
+    register(); // Вызов функции register
   };
 
   return (
     <>
       <Form onFinish={handleSubmit}>
+        {/* Поле ввода имени пользователя */}
         <Form.Item
           name="usernameItem"
           label="Имя пользователя"
@@ -90,7 +91,7 @@ const Register = () => {
               required: true,
               message: "Введите имя пользователя",
             },
-            () => ({
+            () => ({ // Валидация имени пользователя
               validator(_, value) {
                 if (/^[a-zA-Z0-9_]*$/.test(value)) return Promise.resolve();
                 else {
@@ -112,6 +113,7 @@ const Register = () => {
             }}
           />
         </Form.Item>
+        {/* Поле ввода электронной почты */}
         <Form.Item
           name="emailItem"
           label="Адрес электронной почты"
@@ -121,7 +123,7 @@ const Register = () => {
               required: true,
               message: "Введите адрес",
             },
-            () => ({
+            () => ({ // Валидация электронной почты
               validator(_, value) {
                 if (
                   /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/.test(value)
@@ -141,6 +143,7 @@ const Register = () => {
             allowClear={true}
           />
         </Form.Item>
+        {/* Поле ввода пароля */}
         <Form.Item
           name="passwordItem"
           label="Пароль"
@@ -150,7 +153,7 @@ const Register = () => {
               required: true,
               message: "Введите пароль",
             },
-            () => ({
+            () => ({ // Валидация пароля
               validator(_, value) {
                 if (
                   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(
@@ -172,6 +175,7 @@ const Register = () => {
             allowClear={true}
           />
         </Form.Item>
+        {/* Поле ввода подтверждения пароля */}
         <Form.Item
           name="passwordConfirmationItem"
           label="Подтвердите пароль"
@@ -182,8 +186,8 @@ const Register = () => {
               required: true,
               message: "Введите пароль повторно",
             },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
+            ({ getFieldValue }) => ({ 
+              validator(_, value) { // Валидация совпадения паролей
                 if (!value || getFieldValue("passwordItem") === value)
                   return Promise.resolve();
                 else {

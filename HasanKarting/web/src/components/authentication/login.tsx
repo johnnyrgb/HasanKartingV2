@@ -6,30 +6,32 @@ import userObject from "../entities/userObject";
 import axios from 'axios';
 
 const { Text } = Typography;
+
+// Определение типа пропсов для компонента Login
 interface PropsType {
   setUser: (value: userObject) => void;
 }
 
 const Login = ({ setUser }: PropsType) => {
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
-  const navigate = useNavigate();
+  const [username, setUsername] = useState<string>(""); // Состояние для имени пользователя
+  const [password, setPassword] = useState<string>(""); // Состояние для пароля
+  const [rememberMe, setRememberMe] = useState<boolean>(false); // Состояние для флага "Запомнить меня"
+  const navigate = useNavigate(); // Перенаправление пользователя
 
-  const handleSubmit = () => {
-    const model: loginObject = {
+  const handleSubmit = () => {  // Обработчик отправки формы
+    const model: loginObject = { 
       username,
       password,
       rememberMe,
     };
 
-    const login = async () => {
+    const login = async () => { // Функция для выполнения запроса на сервер
 
       await axios
-        .post("https://localhost:7198/api/Account/login", model, {
+        .post("https://localhost:7198/api/Account/login", model, { // Отправка POST-запроса на сервер с использованием axios
           withCredentials: true, // включить куки в запросы
         })
-        .then(function (response) {
+        .then(function (response) { // Обработка различных статусов ответа сервера
           if (response.status === 200) {
             console.log(response);
             setUser(response.data.responseUser);
@@ -48,7 +50,7 @@ const Login = ({ setUser }: PropsType) => {
             });
           } 
         })
-        .catch(function (error) {
+        .catch(function (error) { // Обработка ошибок запроса
           console.log(error);
           if (error.request) {
             notification.error({
@@ -65,7 +67,7 @@ const Login = ({ setUser }: PropsType) => {
           }
         });
       };
-    login();
+    login(); // Вызов функции login
   };
 
   return (
@@ -80,11 +82,11 @@ const Login = ({ setUser }: PropsType) => {
               required: true,
               message: "Введите имя пользователя",
             },
-            () => ({
+            () => ({ // Валидация имени пользователя
               validator(_, value) {
                 if (/^[a-zA-Z0-9_]*$/.test(value)) return Promise.resolve();
                 else {
-                  return Promise.reject(); //TODO: вернуть ошибку
+                  return Promise.reject();
                 }
               },
             }),
@@ -106,16 +108,16 @@ const Login = ({ setUser }: PropsType) => {
               required: true,
               message: "Введите пароль",
             },
-            () => ({
+            () => ({ // Валидация пароля
               validator(_, value) {
-                if (
+                if ( 
                   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(
                     value
                   )
                 )
                   return Promise.resolve();
                 else {
-                  return Promise.reject(); //TODO: вернуть ошибку
+                  return Promise.reject();
                 }
               },
             }),
@@ -128,6 +130,7 @@ const Login = ({ setUser }: PropsType) => {
             allowClear={true}
           />
         </Form.Item>
+        {/* Флажок "Запомнить меня" */}
         <Form.Item name="rememberMeItem">
           <Checkbox
             value={rememberMe}
@@ -136,6 +139,7 @@ const Login = ({ setUser }: PropsType) => {
             Запомнить меня
           </Checkbox>
         </Form.Item>
+        {/* Кнопка "Войти" и ссылка на страницу регистрации */}
         <Form.Item>
           <Button htmlType="submit" type="primary">
             Войти
