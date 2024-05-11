@@ -1,6 +1,7 @@
 ﻿using api.Models;
 using api.Models.Data;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +16,11 @@ namespace api.Controllers
     {
 
         private readonly DatabaseContext _databaseContext;
-        public RaceController(DatabaseContext databaseContext)
+        private readonly UserManager<IdentityUser<int>> _userManager;
+        public RaceController(DatabaseContext databaseContext, UserManager<IdentityUser<int>> userManager)
         {
             _databaseContext = databaseContext;
+            _userManager = userManager;
         }
 
         // GET: api/<RaceController>
@@ -131,6 +134,105 @@ namespace api.Controllers
         private bool isExists(int id)
         {
             return _databaseContext.Races.Any(e => e.Id == id);
+        }
+
+        [HttpDelete("quitrace/{id}")]
+        public async Task<IActionResult> QuitRace(int id)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null)
+                return BadRequest();
+
+            var protocolToDelete = await _databaseContext.Protocols
+                .FirstOrDefaultAsync(p => p.RaceId == id && p.UserId == user.Id);
+
+            if (protocolToDelete == null)
+                return NotFound(); // Возвращаем NotFound, если запись не найдена
+
+            _databaseContext.Protocols.Remove(protocolToDelete);
+            await _databaseContext.SaveChangesAsync();
+
+            return NoContent(); // Возвращаем NoContent после удаления записи
+        }
+
+        [HttpGet("registerrace/{id}")]
+        public async Task<IActionResult> RegisterRace(int id)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null)
+                return BadRequest();
+
+            var carsInRace = await _databaseContext.Protocols
+                .Where(p => p.RaceId == id)
+                .Select(p => p.CarId)
+                .ToListAsync();
+
+            var availableCar = await _databaseContext.Cars
+                .Where(c => !carsInRace.Contains(c.Id))
+                .OrderBy(c => c.Id)
+                .FirstOrDefaultAsync();
+
+            if (availableCar == null)
+                return Conflict("Нет доступных болидов.");
+
+            var protocol = new Protocol
+            {
+                UserId = user.Id,
+                RaceId = id,
+                CarId = availableCar.Id
+            };
+
+            _databaseContext.Protocols.Add(protocol);
+            await _databaseContext.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(RegisterRace), new { id = protocol.Id }, protocol);
+        }
+
+        [HttpGet("myraces")]
+        public async Task<IActionResult> GetMyRaces()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null)
+                return BadRequest();
+
+            var raceIds = await _databaseContext.Protocols
+                .Where(p => p.UserId == user.Id)
+                .Select(p => p.RaceId)
+                .ToListAsync();
+
+         
+            var races = (await _databaseContext.Races.ToListAsync()).Where(r => raceIds.Contains(r.Id)).Select(r => new
+            {
+                id = r.Id,
+                date = r.Date,
+                racersnumber = _databaseContext.Protocols.Where(p => p.RaceId == r.Id).Count(),
+                isended = r.Date > DateTime.Now ? false : true,
+                protocols = _databaseContext.Protocols.Where(p => p.RaceId == r.Id),
+            });
+            return Ok(races);
+        }
+            
+        [HttpGet("registerraces")]
+        public async Task<IActionResult> GetRegisterRaces()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null)
+                return BadRequest();
+
+            var today = DateTime.Today;
+
+            var races = (await _databaseContext.Races.ToListAsync())
+                .Where(r => !_databaseContext.Protocols.Any(p => p.UserId == user.Id && p.RaceId == r.Id) && r.Date >= today)
+                .Select(r => new
+                {
+                    id = r.Id,
+                    date = r.Date,
+                    racersnumber = _databaseContext.Protocols.Count(p => p.RaceId == r.Id),
+                    isended = r.Date > DateTime.Now ? false : true,
+                    protocols = _databaseContext.Protocols.Where(p => p.RaceId == r.Id),
+                });
+
+            return Ok(races);
         }
     }
 }

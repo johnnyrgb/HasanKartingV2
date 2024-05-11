@@ -1,47 +1,42 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { Layout as LayoutAntd, Breadcrumb, Menu, theme } from "antd";
+import { Layout as LayoutAntd, Menu } from "antd";
 import { NavLink } from "reactstrap";
 import userObject from "../userObject";
-import hasanImage from "../../../resources/hasan.png";
-import '../../../styles/fonts.css';
-import '../../../styles/navlink.css';
+import "../../../styles/fonts.css";
+import "../../../styles/navlink.css";
 
 const { Header, Content, Footer } = LayoutAntd;
 
 interface PropsType {
   user: userObject | null;
 }
+
 const DefaultItems = [
-    {
-        label: (
-          <NavLink tag={Link} to="/"
-          className="custom-navlink"
-          style={{
-            fontFamily: "Lozung, sans-serif",
-            fontSize: '28px',
-          }}>
-            Hasan Karting
-          </NavLink>
-        ),
-        key: "2",
-      },
-];
-const RacerItems = [
   {
     label: (
-      <NavLink tag={Link} to="/" className="custom-navlink">
-        Заезды
+      <NavLink
+        tag={Link}
+        to="/"
+        className="custom-navlink"
+        style={{
+          fontFamily: "Lozung, sans-serif",
+          fontSize: "28px",
+        }}
+      >
+        Hasan Karting
       </NavLink>
     ),
     key: "2",
   },
+];
+const RacerItems = [
   {
     label: (
-      <NavLink tag={Link} to="/" className="custom-navlink">
-        Личный кабинет
+      <NavLink tag={Link} to="/myraces" className="custom-navlink">
+        Мои Заезды
       </NavLink>
     ),
-    key: "3",
+    key: "/myraces",
   },
 ];
 
@@ -64,7 +59,7 @@ const AdministratorItems = [
   },
   {
     label: (
-      <NavLink tag={Link} to="/cars" className="custom-navlink"> 
+      <NavLink tag={Link} to="/cars" className="custom-navlink">
         Болиды
       </NavLink>
     ),
@@ -72,11 +67,24 @@ const AdministratorItems = [
   },
 ];
 
+const LogoutItem = {
+  label: (
+    <NavLink
+      tag={Link}
+      to="/logout"
+      className="custom-navlink right-align"
+      style={{ fontSize: "16px" }}
+    >
+      Выйти
+    </NavLink>
+  ),
+  key: "/logout",
+};
+
 const GuestItems = [
   {
     label: (
-      <NavLink tag={Link} to="/register"
-      className="custom-navlink" >
+      <NavLink tag={Link} to="/register" className="custom-navlink">
         Регистрация
       </NavLink>
     ),
@@ -93,31 +101,52 @@ const GuestItems = [
 ];
 
 const Layout = ({ user }: PropsType) => {
-    const location = useLocation();
+  const location = useLocation();
   return (
     <LayoutAntd>
-      <Header 
-      style={{ display: "flex",
-        backgroundColor: "#ef0000",
-        height: 100
-       }}>
-        <Menu
-            style={{ minWidth: "1000px",
-                backgroundColor: "transparent",
-                color: "#ffcc00",
-             }}
-             theme="dark"
-
-          mode="horizontal"
-          selectedKeys={[location.pathname]}
-          items={
-            [...DefaultItems, ...user?.roles.includes("Racer")
-              ? RacerItems
-              : user?.roles.includes("Administrator")
-              ? AdministratorItems
-              : GuestItems]
-          }
-        ></Menu>
+      <Header
+        style={{ display: "flex", backgroundColor: "#ef0000", height: 100 }}
+      >
+        <div style={{ display: "flex", flex: 1, justifyContent: "flex-start" }}>
+          <Menu
+            style={{
+              minWidth: "888px",
+              backgroundColor: "transparent",
+              color: "#ffcc00",
+            }}
+            theme="dark"
+            mode="horizontal"
+            selectedKeys={[location.pathname]}
+            items={[
+              ...DefaultItems,
+              ...(user?.roles.includes("Racer")
+                ? RacerItems.filter((item) => item.key !== "/logout")
+                : user?.roles.includes("Administrator")
+                ? AdministratorItems.filter((item) => item.key !== "/logout")
+                : GuestItems),
+            ]}
+          ></Menu>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          {user?.roles.includes("Racer") && (
+            <Menu
+              style={{ backgroundColor: "transparent", color: "#ffcc00" }}
+              theme="dark"
+              mode="horizontal"
+              selectedKeys={[location.pathname]}
+              items={[LogoutItem]}
+            ></Menu>
+          )}
+          {user?.roles.includes("Administrator") && (
+            <Menu
+              style={{ backgroundColor: "transparent", color: "#ffcc00" }}
+              theme="dark"
+              mode="horizontal"
+              selectedKeys={[location.pathname]}
+              items={[LogoutItem]}
+            ></Menu>
+          )}
+        </div>
       </Header>
       <Content className="site-layout" style={{ minHeight: "100%" }}>
         <Outlet />

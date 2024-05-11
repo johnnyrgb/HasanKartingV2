@@ -10,6 +10,7 @@ import './App.css';
 import axios from 'axios';
 import Racers from './components/racers/racers';
 import Races from './components/races/races';
+import MyRaces from './components/races/userRaces';
 
 
 
@@ -43,6 +44,7 @@ function App() {
           <Route path='/cars' element={<Cars/>}/>
           <Route path='/racers' element={<Racers/>}/>
           <Route path='/races' element={<Races/>}/>
+          <Route path='/myraces' element={<MyRaces/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

@@ -4,4 +4,10 @@
     justify-content: center;
     height: 100%;
     font-size: 24px;
+    margin-right: auto
+
   }
+
+.right-align {
+  margin-left: auto
+}
