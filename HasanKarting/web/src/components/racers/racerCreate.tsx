@@ -2,35 +2,35 @@ import React, { useEffect, useState } from "react";
 import { Input, Modal, Button, Form, notification } from "antd";
 import racerObject from "../entities/racerObject";
 import axios from "axios";
-interface PropsType {
-    editedRacer: racerObject | undefined;
-    addedRacer: (company: racerObject) => void;
-    updatedRacer: (company: racerObject) => void;
-    createModalIsShow: boolean;
-    showCreateModel: (value: boolean) => void;
+interface PropsType { // Определяем интерфейс PropsType для пропсов компонента RacerCreate
+    editedRacer: racerObject | undefined; // Гонщик, который редактируется
+    addedRacer: (racer: racerObject) => void; // Функция, вызываемая при добавлении гонщика
+    updatedRacer: (racer: racerObject) => void; // Функция, вызываемая при обновлении гонщика
+    createModalIsShow: boolean; // Флаг, указывающий, открыт ли модальный окно
+    showCreateModal: (value: boolean) => void; // Функция, открывающая/закрывающая модальное окно
 }
 
 
 
-const RacerCreate : React.FC<PropsType> = ({
+const RacerCreate = ({ 
     editedRacer,
     addedRacer,
     updatedRacer,
     createModalIsShow, 
-    showCreateModel
-}) => {
-    const [form] = Form.useForm(); //Создание экземпляра формы
-    const [username, setUsername] = useState<string>(""); //Текущее значение названия компании
-    const [email, setEmail] = useState<string>(""); //Текущее значение названия компании
-    const [racenumber] = useState<number | undefined>(); //Текущее значение названия компании
-    const [winsnumber] = useState<number | undefined>(); //Текущее значение названия компании
-    const [isEdit, setIsEdit] = useState<boolean>(false); //Редактриуется ли текущая компания
+    showCreateModal
+} : PropsType) => {
+    const [form] = Form.useForm(); // Создание экземпляра формы
+    const [username, setUsername] = useState<string>(""); // Состояние для имени пользовател
+    const [email, setEmail] = useState<string>(""); // Состояние для email
+    const [racenumber] = useState<number | undefined>(); // Состояние для количества гонок
+    const [winsnumber] = useState<number | undefined>(); // Состояние для количества побед
+    const [isEdit, setIsEdit] = useState<boolean>(false); // Состояние для флага, указывающего, редактируется ли текущий гонщик
 
-    useEffect(() => {
+    useEffect(() => { // При монтировании компонента и изменении editedRacer, обновляем состояние формы и данных
         console.log(editedRacer);
         if (editedRacer !== undefined)
         {
-            form.setFieldsValue({
+            form.setFieldsValue({ // Устанавливаем значения формы и состояний из editedRacer
                 username: editedRacer.username,
                 email: editedRacer.email,
             });
@@ -41,7 +41,7 @@ const RacerCreate : React.FC<PropsType> = ({
             console.log(isEdit);
         }
         else
-        {
+        {  // Сбрасываем форму и устанавливаем флаг isEdit в false
             form.resetFields();
             setIsEdit(false);
         }
@@ -51,8 +51,8 @@ const RacerCreate : React.FC<PropsType> = ({
         }
     }, [editedRacer, form, isEdit]);
 
-    const handleSubmit = (e: Event) => {
-        const createRacer = async () => {
+    const handleSubmit = (e: Event) => { // Обработчик отправки формы
+        const createRacer = async () => {  // Функция для создания гонщика
             const racer : racerObject = {
                 username,
                 email,
@@ -61,7 +61,7 @@ const RacerCreate : React.FC<PropsType> = ({
             }
 
             await axios
-            .post("https://localhost:7198/api/Account/racers", racer, {
+            .post("https://localhost:7198/api/Account/racers", racer, { // Отправляем POST-запрос на сервер для создания гонщика
                 withCredentials: true,
             })
             .then(function (response) {
@@ -113,13 +113,13 @@ const RacerCreate : React.FC<PropsType> = ({
             })
         };
 
-        const editRacer = async (id: number | undefined) => {
+        const editRacer = async (id: number | undefined) => { // Функция для редактирования гонщика
             const racer = {
                 id,
                 username,
                 email
             }
-            await axios
+            await axios // Отправляем PUT-запрос на сервер для редактирования гонщика
             .put(`https://localhost:7198/api/Account/racers/${id}`, racer, {
                 withCredentials: true,
             })
@@ -155,7 +155,7 @@ const RacerCreate : React.FC<PropsType> = ({
             })
         };
 
-        if (isEdit)
+        if (isEdit) // Вызываем соответствующую функцию в зависимости от флага isEdit
         {
             console.log(editedRacer);
             editRacer(editedRacer?.id);
@@ -166,20 +166,21 @@ const RacerCreate : React.FC<PropsType> = ({
     return (
         <Modal open={createModalIsShow}
             title="Болид"
-            onCancel={() => showCreateModel(false)}
+            onCancel={() => showCreateModal(false)}
             footer={[
                 <Button
                     key="submitButton"
                     form="racerForm"
                     type="primary"
                     htmlType="submit"
-                    onClick={() => showCreateModel(false)}>
+                    onClick={() => showCreateModal(false)}>
                     Сохранить
                 </Button>,
-                <Button key="closeButton" onClick={() => showCreateModel(false)} danger>
+                <Button key="closeButton" onClick={() => showCreateModal(false)} danger>
                     Отменить
                 </Button>
             ]}>
+              {/* Форма для ввода данных гонщика */}
             <Form id="racerForm" onFinish={handleSubmit} form={form}>
             <Form.Item name="username" 
                     label="Имя пользователя" 
