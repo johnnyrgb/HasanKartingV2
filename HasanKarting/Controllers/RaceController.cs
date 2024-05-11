@@ -27,6 +27,21 @@ namespace api.Controllers
             return await _databaseContext.Races.ToListAsync();
         }
 
+        [HttpGet]
+        [Route("all")]
+        public async Task<ActionResult> GetAllRaces()
+        {
+            var races = (await _databaseContext.Races.ToListAsync()).Select(r => new
+            {
+                id = r.Id,
+                date = r.Date,
+                racersnumber = _databaseContext.Protocols.Where(p => p.RaceId == r.Id).Count(),
+                isended = r.Date > DateTime.Now ? false : true,
+                protocols = _databaseContext.Protocols.Where(p => p.RaceId == r.Id),
+            });
+            return Ok(races);
+        }
+
         // GET api/<RaceController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Race>> Get(int id)
@@ -37,15 +52,46 @@ namespace api.Controllers
             return race;
         }
 
+        // GET api/<RaceController>/5
+        [HttpGet("generate/{id}")]
+        public async Task<ActionResult<Race>> GenerateResultById(int id)
+            {
+            var protocols = await _databaseContext.Protocols
+                .Where(p => p.RaceId == id)
+                .ToListAsync();
+
+            if (protocols == null || protocols.Count == 0)
+                return NotFound();
+
+            // Генерируем лучшее время в диапазоне от 45 до 55 минут
+            var bestTime = TimeOnly.FromTimeSpan(TimeSpan.FromMinutes(new Random().Next(45, 56)));
+
+            foreach (var protocol in protocols)
+            {
+                // Генерируем случайное время прохождения дистанции, которое хуже лучшего времени, но не более чем на 60 секунд
+                var randomTime = TimeOnly.FromTimeSpan(bestTime.ToTimeSpan().Add(TimeSpan.FromSeconds(new Random().Next(0, 61))));
+
+                // Обновляем поле CompletionTime для каждого protocol
+                protocol.CompletionTime = randomTime;
+            }
+
+            // Сохраняем изменения в базе данных
+            await _databaseContext.SaveChangesAsync();
+
+            // Возвращаем результат или другую информацию, если это необходимо
+            // Например, можно вернуть информацию о гонке
+            return Ok();
+        }
+
         // POST api/<RaceController>
         [HttpPost]
         public async Task<ActionResult<Race>> Post(Race race)
-        {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-                _databaseContext.Races.Add(race);
-                await _databaseContext.SaveChangesAsync();
-                return CreatedAtAction("Get", new { id = race.Id }, race);
+            {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            _databaseContext.Races.Add(race);
+            await _databaseContext.SaveChangesAsync();
+            return CreatedAtAction("Get", new { id = race.Id }, race);
         }
 
         // PUT api/<RaceController>/5

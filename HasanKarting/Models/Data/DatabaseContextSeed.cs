@@ -139,11 +139,11 @@ namespace api.Models.Data
                     var races = new Race[]
                     {
 
-                        new Race { Date = new DateTime(2024, 1, 20) },
-                        new Race { Date = new DateTime(2024, 2, 10) },
-                        new Race { Date = new DateTime(2024, 7, 15) },
-                        new Race { Date = new DateTime(2024, 8, 5) },
-                        new Race { Date = new DateTime(2024, 9, 25) },
+                       new Race { Date = DateTime.SpecifyKind(new DateTime(2024, 1, 20), DateTimeKind.Utc) },
+                        new Race { Date = DateTime.SpecifyKind(new DateTime(2024, 2, 10), DateTimeKind.Utc) },
+                        new Race { Date = DateTime.SpecifyKind(new DateTime(2024, 7, 15), DateTimeKind.Utc) },
+                        new Race { Date = DateTime.SpecifyKind(new DateTime(2024, 8, 5), DateTimeKind.Utc) },
+                        new Race { Date = DateTime.SpecifyKind(new DateTime(2024, 9, 25), DateTimeKind.Utc) },
                     };
 
                     foreach (Race item in races)

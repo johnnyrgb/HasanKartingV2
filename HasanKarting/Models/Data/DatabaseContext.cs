@@ -52,7 +52,7 @@ namespace api.Models.Data
                 // Все поля не nullable
                 r.Property(r => r.Id).IsRequired();
                 r.Property(r => r.Date).IsRequired();
-                r.Property(r => r.Date).HasColumnType("timestamp without time zone");
+                r.Property(r => r.Date).HasColumnType("timestamp with time zone");
                 r.HasMany(r => r.Protocols)
                  .WithOne()
                  .IsRequired();

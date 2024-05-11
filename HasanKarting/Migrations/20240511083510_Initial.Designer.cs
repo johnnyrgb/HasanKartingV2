@@ -12,7 +12,7 @@ using api.Models.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240506114731_Initial")]
+    [Migration("20240511083510_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -303,7 +303,7 @@ namespace api.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 

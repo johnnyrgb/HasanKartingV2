@@ -1,6 +1,7 @@
 ﻿using api.Models;
 using api.Models.Data;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +16,11 @@ namespace api.Controllers
     {
 
         private readonly DatabaseContext _databaseContext;
-        public ProtocolController(DatabaseContext databaseContext)
+        private readonly UserManager<IdentityUser<int>> _userManager;
+        public ProtocolController(DatabaseContext databaseContext, UserManager<IdentityUser<int>> userManager)
         {
             _databaseContext = databaseContext;
+            _userManager = userManager;
         }
 
         // GET: api/<ProtocolController>
@@ -35,6 +38,22 @@ namespace api.Controllers
             if (protocol == null)
                 return NotFound();
             return protocol;
+        }
+
+
+
+        [HttpGet("race/{id}")]
+        public async Task<ActionResult> GetByRaceId(int id)
+        {
+            var protocols = (await _databaseContext.Protocols.ToListAsync()).Where(p => p.RaceId == id).Select(async p => new
+            {
+                racer = (await _userManager.FindByIdAsync((p.UserId).ToString())).UserName,
+                car = (await _databaseContext.Cars.FindAsync(p.CarId)).Manufacturer + " " + (await _databaseContext.Cars.FindAsync(p.CarId)).Model,
+                completiontime = p.CompletionTime
+             });
+
+            return Ok(protocols);
+           
         }
 
         // POST api/<ProtocolController>

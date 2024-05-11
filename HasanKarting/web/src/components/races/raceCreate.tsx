@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { DatePicker, Modal, Button, Form, notification } from "antd";
 import raceObject from "../entities/raceObject";
 import axios from "axios";
+import moment from "moment-timezone";
 
-
-
-interface PropsType {
+interface PropsType {   
     editedRace: raceObject | undefined;
     addedRace: (race: raceObject) => void;
     updatedRace: (race: raceObject) => void;
@@ -50,7 +49,7 @@ const RaceCreate : React.FC<PropsType> = ({
     const handleSubmit = (e: Event) => {
         const createRace = async () => {
             const race : raceObject = {
-                date
+                date,
             }
             console.log("Dfds");
             console.log(race);
@@ -94,7 +93,7 @@ const RaceCreate : React.FC<PropsType> = ({
         const editRace = async (id: number | undefined) => {
             const race : raceObject = {
                 id,
-                date
+                date,
             }
             await axios
             .put(`https://localhost:7198/api/Race/${id}`, race, {
@@ -164,6 +163,7 @@ const RaceCreate : React.FC<PropsType> = ({
                     hasFeedback rules={[
                     {
                         required: true,
+                        type: "date",
                         message: "Введите дату"
                     }
                 ]}>
@@ -171,7 +171,7 @@ const RaceCreate : React.FC<PropsType> = ({
                     key="datePicker" 
                     name="datePicker" 
                     showTime={true} 
-                    onChange={(date, dateString) => setDatetime(date)} 
+                    onChange={(date, dateString) => setDatetime(moment.utc(dateString).format())}
                     value={date}/>
                 </Form.Item>
             </Form>
