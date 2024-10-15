@@ -1,4 +1,4 @@
-#Описание
+# Описание
 Веб-API разработана на платформе **ASP.NET Core**. В качестве ORM использована
 **Entity Framework**. Серверная часть содержит следующие папки:
 
@@ -30,9 +30,9 @@
 помощью npm. Для реализации пользовательского интерфейса были использованы
 компоненты из библиотеки **AntDesign**. В качестве шаблона пользовательского интерфейса
 был выбран шаблон Header-Content-Footer.
-#Скриншоты
+# Скриншоты
 ![image](https://github.com/user-attachments/assets/06ba3d5c-7d65-441f-9dbc-6bf93550f248)
 ![image](https://github.com/user-attachments/assets/17288b46-ded6-441a-8efc-462138929951)
 ![image](https://github.com/user-attachments/assets/9cb499f8-8c5b-45fc-8349-b81ae8b3e299)
-#Демонстрация работы 
+# Демонстрация работы 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/VLwZBl5_sUw/3.jpg)](https://youtu.be/VLwZBl5_sUw)
